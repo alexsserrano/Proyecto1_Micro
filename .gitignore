@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyo
+*.pyc
+*.pyo
+*.pyz
+*.pyw
+*.pyz
+*.pyw
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+#venv/
+#env/
+#*.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Temporary files
+*~
+.DS_Store
+Thumbs.db
