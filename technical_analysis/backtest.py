@@ -1,4 +1,6 @@
 import pandas as pd
+
+
 def backtest(data: pd.DataFrame, buy_signals: pd.DataFrame, sell_signals: pd.DataFrame, initial_cash: float = 10000,
              commission_per_trade: float = 0.001):
     """

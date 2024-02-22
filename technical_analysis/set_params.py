@@ -19,6 +19,7 @@ def set_params(strategy: dict, **kwargs) -> dict:
 
     return strategy
 
+
 # Ejemplo de estrategia
 strategy_example = {'id': 1, 'indicators': ['SMA']}
 
