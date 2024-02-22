@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import ta  # Importamos la biblioteca para análisis técnico
 
+
 def generate_sell_signals(data: pd.DataFrame, strategies: list) -> pd.DataFrame:
     """
     Genera señales de venta para cada estrategia en los datos proporcionados, basándose en SMA, RSI, Bandas de Bollinger y Oscilador de Volumen.
