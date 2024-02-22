@@ -59,3 +59,5 @@ def optimize(data: pd.DataFrame, n_trials: int = 100):
 # Nota: Antes de ejecutar optimize, asegúrate de que todas las funciones necesarias
 # (generate_buy_signals, generate_sell_signals, backtest, y cualquier otra función relevante)
 # estén definidas correctamente y de que 'data' esté cargado con tus datos de precios.
+def optimize_strategy():
+    return None

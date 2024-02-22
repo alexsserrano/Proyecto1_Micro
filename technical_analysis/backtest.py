@@ -47,3 +47,7 @@ def backtest(data: pd.DataFrame, buy_signals: pd.DataFrame, sell_signals: pd.Dat
         'total_return': total_return,
         'portfolio_value_over_time': portfolio_value
     }
+
+
+def backtest_strategy():
+    return None

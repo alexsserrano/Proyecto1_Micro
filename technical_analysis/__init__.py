@@ -27,10 +27,9 @@ __all__ = [
 def momentum():
     return None
 
-
 def trend():
     return None
 
-
 def volatility():
     return None
+
