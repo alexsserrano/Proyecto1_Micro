@@ -2,7 +2,8 @@ import pandas as pd
 
 
 def backtest(data: pd.DataFrame, buy_signals: pd.DataFrame, sell_signals: pd.DataFrame, initial_cash: float = 10000,
-             commission_per_trade: float = 0.001):
+             commission_per_trade: float = 0.001, shares_to_operate = 10,
+             stop_loss: float = 0.01, take_profit: float = 0.01):
     """
     Realiza el backtesting de estrategias de trading basadas en señales de compra y venta,
     calculando el rendimiento de la inversión sobre un conjunto de datos históricos.
@@ -20,14 +21,20 @@ def backtest(data: pd.DataFrame, buy_signals: pd.DataFrame, sell_signals: pd.Dat
     cash = initial_cash
     shares_held = {col: 0 for col in buy_signals.columns}  # Diccionario para rastrear acciones compradas por estrategia
     portfolio_value = []
+    long_active_positions = []
+    short_active_positions = []
 
     for i in range(len(data)):
-        for strategy in buy_signals.columns:
-            # Comprar acciones basadas en la señal de compra y si hay efectivo disponible
-            if buy_signals[strategy].iloc[i] == 1 and cash > data['Close'].iloc[i]:
-                shares_to_buy = int(cash / data['Close'].iloc[i] / (1 + commission_per_trade))
-                shares_held[strategy] += shares_to_buy
-                cash -= shares_to_buy * data['Close'].iloc[i] * (1 + commission_per_trade)
+        temp_operations = []
+        # for strategy in buy_signals.columns:
+            # Comprar acciones basadas en las señales de compra si todas estan true y si hay efectivo disponible
+            if sum(buy_signals.iloc[i, :].values) == len(buy_signals.columns) and cash > data['Close'].iloc[i] * shares_to_operate:
+            # if buy_signals[strategy].iloc[i] == 1 and cash > data['Close'].iloc[i]:
+                # shares_to_buy = int(cash / data['Close'].iloc[i] / (1 + commission_per_trade))
+                #shares_held[strategy] += shares_to_buy
+                # Add operation to active ops
+                temp_operations.append(shares_to_operate)
+                cash -= shares_to_operate * data['Close'].iloc[i] * (1 + commission_per_trade)
 
             # Vender acciones basadas en la señal de venta
             if sell_signals[strategy].iloc[i] == 1 and shares_held[strategy] > 0:

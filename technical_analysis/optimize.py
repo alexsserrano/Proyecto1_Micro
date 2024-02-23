@@ -45,7 +45,7 @@ def optimize(data: pd.DataFrame, n_trials: int = 100):
         sell_signals = generate_sell_signals(data, strategies)
 
         # Realizar backtesting y obtener el rendimiento de la estrategia
-        backtest_results = backtest(data, buy_signals, sell_signals, initial_cash=10000, commission_per_trade=0.001)
+        backtest_results = backtest(data, buy_signals, sell_signals, initial_cash=100000, commission_per_trade=0.00125)
         total_return = backtest_results['total_return']
 
         return total_return  # Objetivo a maximizar
