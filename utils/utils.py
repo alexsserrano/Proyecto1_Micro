@@ -8,5 +8,3 @@ class Operation:
         self.sold_at = None
         self.stop_loss = stop_loss
         self.take_profit = take_profit
-
-
