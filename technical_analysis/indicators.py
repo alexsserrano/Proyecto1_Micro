@@ -5,7 +5,18 @@ def calculate_rsi(data, window=14):
     return rsi_data.rsi()
 
 def calculate_sma(close, window):
+    """
+    Calcula la Media Móvil Simple (SMA) para los datos proporcionados.
+
+    Parameters:
+    - close (pd.Series): Serie que contiene los precios de cierre.
+    - window (int): El tamaño de la ventana para el cálculo de la SMA.
+
+    Returns:
+    - pd.Series: La SMA calculada.
+    """
     return ta.trend.SMAIndicator(close=close, window=window).sma_indicator()
+
 
 # def calculate_bollinger(data, window, window_dev):
 #    bb_indicator = ta.volatility.BollingerBands(close=data.Close, window=window, window_dev=window_dev)
