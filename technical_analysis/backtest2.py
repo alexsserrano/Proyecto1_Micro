@@ -81,7 +81,7 @@ def backtest(data: pd.DataFrame, buy_signals: pd.DataFrame, sell_signals: pd.Dat
             cash -= current_price * shares_to_operate * (
                         1 + commission_per_trade)  # Asumiendo un modelo de margen simplificado para cortos
             active_operations.append(Operation("short", current_price, shares_to_operate, stop_loss, take_profit,
-                                               initial_margin=current_price * shares_to_operate * 0.25)) #
+                                               initial_margin=current_price * shares_to_operate * 0.25))
 
         # Calcular el valor total de la cartera
         total_shares_value = sum(current_price * op.shares for op in active_operations if not op.closed)
