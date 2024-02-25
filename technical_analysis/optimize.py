@@ -1,6 +1,6 @@
+# optimize.py
 import optuna
 import pandas as pd
-
 from technical_analysis.backtest import backtest
 from technical_analysis.generate_buy_signals import generate_buy_signals
 from technical_analysis.generate_sell_signals import generate_sell_signals
@@ -51,13 +51,13 @@ def optimize(data: pd.DataFrame, n_trials: int = 100):
         return total_return  # Objetivo a maximizar
 
     # Crear y ejecutar el estudio de optimización
-    study = optuna.create_study(direction = 'maximize')
-    study.optimize(objective, n_trials = n_trials)
+    study = optuna.create_study(direction='maximize')
+    study.optimize(objective, n_trials=n_trials)
 
     return study
 
 # Nota: Antes de ejecutar optimize, asegúrate de que todas las funciones necesarias
 # (generate_buy_signals, generate_sell_signals, backtest, y cualquier otra función relevante)
 # estén definidas correctamente y de que 'data' esté cargado con tus datos de precios.
-def optimize_strategy():
-    return None
+# def optimize_strategy():
+# return None

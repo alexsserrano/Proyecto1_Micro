@@ -1,3 +1,4 @@
+# generate_sell_signals.py
 import pandas as pd
 import numpy as np
 import ta  # Importamos la biblioteca para análisis técnico

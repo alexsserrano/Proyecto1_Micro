@@ -1,3 +1,4 @@
+# set_params.py
 def set_params(strategy: dict, **kwargs) -> dict:
     """
     Establece o ajusta los parámetros para los indicadores de una estrategia de trading.

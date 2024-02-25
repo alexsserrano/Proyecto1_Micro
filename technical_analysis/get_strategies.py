@@ -1,3 +1,4 @@
+# get_strategies.py
 def get_strategies() -> list:
     """
     Genera una lista de todas las posibles estrategias de trading basadas en combinaciones de indicadores técnicos.

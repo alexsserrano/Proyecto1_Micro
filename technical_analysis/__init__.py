@@ -1,3 +1,4 @@
+# __init.py__
 """It is a Technical Analysis library useful to do feature
 engineering from financial time series datasets (Open,
 Close, High, Low, Volume). It is built on Pandas and Numpy.
