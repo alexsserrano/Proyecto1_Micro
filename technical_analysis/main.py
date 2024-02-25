@@ -1,41 +1,47 @@
 import pandas as pd
 from set_params import set_params
-from .optimize import optimize
+from optimize import optimize
 from get_strategies import get_strategies
 from generate_buy_signals import generate_buy_signals
 from generate_sell_signals import generate_sell_signals
-from backtest import backtest2
+from technical_analysis import backtest
 from indicators import calculate_rsi, calculate_sma
 
-# Cargar los conjuntos de datos
-datasets = {
-    "5m": pd.read_csv("data/aapl_5m_train.csv"),
-    "1m": pd.read_csv("data/aapl_1m_train.csv"),
-    "1d": pd.read_csv("data/aapl_1d_train.csv"),
-    "1h": pd.read_csv("data/aapl_1h_train.csv"),
-}
+def main():
+    # Cargar los conjuntos de datos
+    datasets = {
+        "5m": pd.read_csv("data/aapl_5m_train.csv"),
+        "1m": pd.read_csv("data/aapl_1m_train.csv"),
+        "1d": pd.read_csv("data/aapl_1d_train.csv"),
+        "1h": pd.read_csv("data/aapl_1h_train.csv"),
+    }
 
-# Iterar sobre cada conjunto de datos
-for timeframe, data in datasets.items():
-    print(f"Procesando datos de {timeframe}...")
+    # Resultados globales
+    global_results = {}
 
-    # Aplicar los indicadores técnicos necesarios
-    # Ejemplo:
-    data['RSI'] = calculate_rsi(data['close'], window=14)
-    data['SMA'] = calculate_sma(data['close'], window=50)
+    # Iterar sobre cada conjunto de datos
+    for timeframe, data in datasets.items():
+        print(f"Procesando datos de {timeframe}...")
 
-    # Generar estrategias base
-    strategies = get_strategies()
+        # Aplicar los indicadores técnicos necesarios
+        data['RSI'] = calculate_rsi(data['close'], window=14)
+        data['SMA'] = calculate_sma(data['close'], window=50)
 
-    # Generar señales de compra y venta
-    data = generate_buy_signals(data, strategies)
-    data = generate_sell_signals(data, strategies)
+        # Generar estrategias base
+        strategies = get_strategies()
 
-    # Optimizar estrategias
-    study = optimize(data, num_trials=100)
+        # Generar señales de compra y venta
+        data = generate_buy_signals(data, strategies)
+        data = generate_sell_signals(data, strategies)
 
-    # Realizar backtesting con la estrategia óptima
-    results = backtest(data, study.best_params)
+        # Optimizar estrategias
+        study = optimize(data)
 
-    # Analizar los resultados
-    
+        # Realizar backtesting con la estrategia óptima
+        results = backtest2(data, study.best_params)
+
+        # Guardar los resultados para cada timeframe
+        global_results[timeframe] = results
+
+    # Analizar y presentar resultados globales
+
