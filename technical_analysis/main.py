@@ -1,10 +1,10 @@
 import pandas as pd
 from set_params import set_params
-from optimize import optimize
+from .optimize import optimize
 from get_strategies import get_strategies
 from generate_buy_signals import generate_buy_signals
 from generate_sell_signals import generate_sell_signals
-from backtest import backtest
+from backtest import backtest2
 from indicators import calculate_rsi, calculate_sma
 
 # Cargar los conjuntos de datos
