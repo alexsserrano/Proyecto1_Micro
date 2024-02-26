@@ -29,16 +29,6 @@ for timeframe, data in datasets.items():
     data['BB_mavg'], data['BB_hband'], data['BB_lband'] = calculate_bollinger(data, 20, 2)
     data['Volume_Osc'] = calculate_volume_oscillator(data, 5, 20)
 
-    # Generar estrategias base
-    strategies = get_strategies()
-
-    # Optimizar estrategias
-    # Nota: Asumiendo que optimize() está adecuadamente definido para trabajar con las estrategias y los datos
-    study = optimize(data, 100)  # Ejemplo: 100 trials
-
-    # Seleccionar la estrategia óptima y ajustar parámetros
-    optimal_strategy = set_params(study, **study.best_params)
-
     # Generar señales de compra y venta usando la estrategia óptima
     buy_signals = generate_buy_signals(data, optimal_strategy)
     sell_signals = generate_sell_signals(data, optimal_strategy)
