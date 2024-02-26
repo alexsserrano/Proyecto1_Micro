@@ -25,5 +25,5 @@ def get_strategies() -> list:
 
 # Generamos todas las estrategias posibles
 all_strategies = get_strategies()
-# Por motivos de espacio, mostraré solo las primeras 5 estrategias generadas
+# Por motivos de espacio, mostraré solo las ultimas 5 estrategias generadas
 print(all_strategies[:5])

@@ -16,6 +16,12 @@ datasets = {
     "1h": pd.read_csv("data/aapl_1h_train.csv"),
 }
 
+# Obtener estrategias
+strategies = get_strategies()
+
+# Optimizar estrategias para cada conjunto de datos
+optimized_strategies = {timeframe: optimize(data, strategies) for timeframe, data in datasets.items()}
+
 # Definir los resultados finales
 final_results = []
 
@@ -23,27 +29,47 @@ final_results = []
 for timeframe, data in datasets.items():
     print(f"Procesando datos de {timeframe}...")
 
-    # Aplicar los indicadores técnicos necesarios
-    data['RSI'] = calculate_rsi(data, window=14)
-    data['SMA_short'], data['SMA_long'] = calculate_sma(data['close'], 5), calculate_sma(data['close'], 20)
-    data['BB_mavg'], data['BB_hband'], data['BB_lband'] = calculate_bollinger(data, 20, 2)
-    data['Volume_Osc'] = calculate_volume_oscillator(data, 5, 20)
+    # Obtener la estrategia óptima para el timeframe actual
+    optimal_strategy = optimized_strategies[timeframe]
+
+    # Aplicar los indicadores técnicos necesarios utilizando la estrategia óptima
+    data['RSI'] = calculate_rsi(data, window=optimal_strategy['params']['RSI']['window'])
+    data['SMA_short'], data['SMA_long'] = calculate_sma(data['close'], optimal_strategy['params']['SMA']['short_window']), calculate_sma(data['close'], optimal_strategy['params']['SMA']['long_window'])
+    data['BB_mavg'], data['BB_hband'], data['BB_lband'] = calculate_bollinger(data, optimal_strategy['params']['BB']['window'], optimal_strategy['params']['BB']['std_dev'])
+    data['Volume_Osc'] = calculate_volume_oscillator(data, optimal_strategy['params']['Volume_Osc']['short_window'], optimal_strategy['params']['Volume_Osc']['long_window'])
 
     # Generar señales de compra y venta usando la estrategia óptima
     buy_signals = generate_buy_signals(data, optimal_strategy)
     sell_signals = generate_sell_signals(data, optimal_strategy)
 
     # Realizar backtesting con la estrategia óptima
-    results = backtest(data, buy_signals, sell_signals, 10000, 0.001, 10, 0.01, 0.01)
+    results = backtest(data, buy_signals, sell_signals, 1000000, 0.001, 100, 0.01, 0.01)
 
     # Guardar los resultados
     final_results.append({"timeframe": timeframe, "results": results})
 
-# Analizar y comparar los resultados
-# Nota: Este paso puede implicar visualizar los resultados, comparar rendimientos entre diferentes timeframes,
-# y potencialmente comparar contra una estrategia pasiva.
-# El análisis detallado y las visualizaciones pueden ser realizados en un Jupyter Notebook como 'report.ipynb'.
-
-# Ejemplo de cómo podrías imprimir un resumen de los resultados:
+# Imprimir un resumen de los resultados
 for result in final_results:
     print(f"Timeframe: {result['timeframe']}, Total Return: {result['results']['total_return']}")
+
+# Asumiendo que final_results es una lista de diccionarios con los resultados del backtesting,
+# incluyendo un DataFrame para cada timeframe que contiene una columna 'Portfolio_Value'.
+
+for result in final_results:
+    timeframe = result['timeframe']
+    data = datasets[timeframe]  # Obtiene el DataFrame original para este timeframe
+    backtest_results = result['results']  # Supongamos que esto es un DataFrame que incluye 'Portfolio_Value'
+
+    # Calcula el valor del portafolio para una estrategia de "comprar y mantener"
+    initial_investment = data['close'].iloc[0] * 100  # Asumiendo 100 acciones como ejemplo
+    buy_and_hold_value = data['close'] / data['close'].iloc[0] * initial_investment
+
+    # Visualización
+    plt.figure(figsize=(14, 7))
+    plt.plot(backtest_results.index, backtest_results['Portfolio_Value'], label='Estrategia de Trading')
+    plt.plot(data.index, buy_and_hold_value, label='Comprar y Mantener', alpha=0.7)
+    plt.title(f'Rendimiento de la Estrategia de Trading vs. Comprar y Mantener - {timeframe}')
+    plt.xlabel('Fecha')
+    plt.ylabel('Valor del Portafolio')
+    plt.legend()
+    plt.show()

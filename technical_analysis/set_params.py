@@ -25,3 +25,4 @@ def set_params(strategy: dict, **kwargs) -> dict:
                 strategy['params'][indicator].update(params)
 
     return strategy
+
