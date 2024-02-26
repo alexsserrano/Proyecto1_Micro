@@ -15,7 +15,8 @@ def get_strategies() -> list:
         strategy_indicators = [indicators[j] for j in range(n) if (i >> j) & 1]
         strategy = {
             'id': i,
-            'indicators': strategy_indicators
+            'indicators': strategy_indicators,
+            'params': {}
         }
         strategies.append(strategy)
 

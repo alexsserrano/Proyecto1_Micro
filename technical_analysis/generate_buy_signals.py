@@ -27,6 +27,7 @@ def generate_buy_signals(data: pd.DataFrame, strategies: list) -> pd.DataFrame:
             window_long = strategy['params'].get('long_window', 21)
             short_ma = ta.trend.SMAIndicator(data['Close'], window=window_short).sma_indicator()
             long_ma = ta.trend.SMAIndicator(data['Close'], window=window_long).sma_indicator()
+            signals[signal_name] = signals[signal_name].astype(bool)
             signals[signal_name] &= (short_ma > long_ma)
 
         if 'RSI' in strategy['indicators']:
@@ -34,6 +35,7 @@ def generate_buy_signals(data: pd.DataFrame, strategies: list) -> pd.DataFrame:
             rsi_period = strategy['params'].get('rsi_period', 14)
             rsi = ta.momentum.RSIIndicator(data['Close'], window=rsi_period).rsi()
             # Señal de compra cuando RSI < 30 (condición de sobreventa)
+            signals[signal_name] = signals[signal_name].astype(bool)
             signals[signal_name] &= (rsi < 30)
 
         if 'Bollinger Bands' in strategy['indicators']:
@@ -42,6 +44,7 @@ def generate_buy_signals(data: pd.DataFrame, strategies: list) -> pd.DataFrame:
             bb_std = strategy['params'].get('bb_std', 2)
             bb = ta.volatility.BollingerBands(data['Close'], window=bb_window, window_dev=bb_std)
             # Señal de compra cuando el precio cierra por debajo de la banda inferior (potencial rebote)
+            signals[signal_name] = signals[signal_name].astype(bool)
             signals[signal_name] &= (data['Close'] < bb.bollinger_lband())
 
         if 'Volume Oscillator' in strategy['indicators']:
@@ -52,9 +55,12 @@ def generate_buy_signals(data: pd.DataFrame, strategies: list) -> pd.DataFrame:
             long_vol_ma = data['Volume'].rolling(window=long_vol_window).mean()
             vol_osc = short_vol_ma - long_vol_ma
             # Señal de compra cuando el oscilador de volumen es positivo (indicando aumento del volumen)
+            signals[signal_name] = signals[signal_name].astype(bool)
             signals[signal_name] &= (vol_osc > 0)
 
     # Convertir las señales a binario (1 para compra, 0 para no compra)
-    signals = signals.applymap(lambda x: 1 if x else 0)
+    # signals = signals.applymap(lambda x: 1 if x else 0)
+    for col in signals.columns:
+        signals[col] = signals[col].astype(int)
 
     return signals
