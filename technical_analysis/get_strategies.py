@@ -1,5 +1,5 @@
 # get_strategies.py
-def get_strategies() -> list:
+def  get_strategies() -> list:
     """
     Genera una lista de todas las posibles estrategias de trading basadas en combinaciones de indicadores técnicos.
 
@@ -11,7 +11,7 @@ def get_strategies() -> list:
     n = len(indicators)
 
     # Genera todas las combinaciones posibles de indicadores
-    for i in range(1, 2 ** n):
+    for i in range(1, 2 ** n ):
         strategy_indicators = [indicators[j] for j in range(n) if (i >> j) & 1]
         strategy = {
             'id': i,

@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class Operation:
-    def __init__(self, operation_type, bought_at, shares, stop_loss=None, take_profit=None, initial_margin=0):
+    def __init__(self, operation_type, bought_at, shares, stop_loss=None, take_profit=None, initial_margin=0, strategy_id=None):
         self.operation_type = operation_type  # "long" o "short"
         self.bought_at = bought_at
         self.shares = shares
@@ -11,6 +11,7 @@ class Operation:
         self.take_profit = take_profit
         self.initial_margin = initial_margin  # Margen inicial para operaciones cortas
         self.current_margin = initial_margin  # Margen actual, ajustado para operaciones cortas
+        self.strategy_id = strategy_id  # Número de estrategia
         self.closed = False  # Indica si la operación está cerrada
 
 
@@ -74,15 +75,28 @@ def backtest(data: pd.DataFrame, buy_signals: pd.DataFrame, sell_signals: pd.Dat
         active_operations, cash = adjust_margin_and_handle_margin_calls(data.iloc[:i + 1], active_operations, cash,
                                                                         commission_per_trade)
 
-        # Abrir nuevas operaciones basadas en señales de compra y venta
-        if buy_signals.iloc[i].all() and cash >= current_price * shares_to_operate * (1 + commission_per_trade):
-            cash -= current_price * shares_to_operate * (1 + commission_per_trade)
-            active_operations.append(Operation("long", current_price, shares_to_operate, stop_loss, take_profit))
-        if sell_signals.iloc[i].all() and cash >= current_price * shares_to_operate * (1 + commission_per_trade):
-            cash -= current_price * shares_to_operate * (
-                        1 + commission_per_trade)  # Asumiendo un modelo de margen simplificado para cortos
-            active_operations.append(Operation("short", current_price, shares_to_operate, stop_loss, take_profit,
-                                               initial_margin=current_price * shares_to_operate * 0.25))
+        # Iterar sobre cada estrategia en buy_signals
+        for strategy_column in buy_signals.columns:
+            # Verificar la señal de compra para la estrategia actual y abrir nuevas operaciones basadas en señales de compra y venta
+            if buy_signals[strategy_column].iloc[i] and cash >= current_price * shares_to_operate * (
+                    1 + commission_per_trade):
+                cash -= current_price * shares_to_operate * (1 + commission_per_trade)
+
+                # Extraer el número de estrategia desde el nombre de la columna
+                strategy_number = int(strategy_column.split('_')[1])
+
+                # Agregar una nueva operación basada en la estrategia actual
+                active_operations.append(Operation("long", current_price, shares_to_operate,
+                                                                            stop_loss, take_profit,
+                                                                            initial_margin=current_price * shares_to_operate * 0.25,
+                                                                            strategy_id=strategy_number))
+            if sell_signals.iloc[i].all() and cash >= current_price * shares_to_operate * (1 + commission_per_trade):
+                cash -= current_price * shares_to_operate * (
+                            1 + commission_per_trade)  # Asumiendo un modelo de margen simplificado para cortos
+                active_operations.append(Operation("short", current_price, shares_to_operate, stop_loss, take_profit,
+                                                   initial_margin=current_price * shares_to_operate * 0.25))
+
+
 
         # Calcular el valor total de la cartera
         total_shares_value = sum(current_price * op.shares for op in active_operations if not op.closed)
